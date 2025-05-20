@@ -20,7 +20,7 @@ function proizvod_shortcode_callback($atts) {
   // Fetch proizvodi
 
   $args = array(
-    'post_type'      => 'proizvod',
+    'post_type'      => 'product',
     'posts_per_page' => -1,
     'post_status'    => 'publish',
   );
