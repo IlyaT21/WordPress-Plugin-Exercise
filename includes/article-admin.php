@@ -8,31 +8,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Register product details metabox
-function proizvod_details_add_meta_box() {
+// Register article details metabox
+function article_details_add_meta_box() {
   add_meta_box(
-      'proizvod_details_meta_box', // ID
-      __('Detalji', 'textdomain'), // Title
-      'proizvod_details_meta_box_callback', // Callback function
-      'proizvod', // Post type
-      'normal', // Context
-      'default' // Priority
+    'article_details_meta_box', // ID
+    __('Details', 'textdomain'), // Title
+    'article_details_meta_box_callback', // Callback function
+    'article', // Post type
+    'normal', // Context
+    'default' // Priority
   );
 }
-add_action('add_meta_boxes', 'proizvod_details_add_meta_box');
+add_action('add_meta_boxes', 'article_details_add_meta_box');
 
-// Register product availabiliity metabox
-function proizvod_availability_add_meta_box() {
+// Register article availabiliity metabox
+function article_availability_add_meta_box() {
   add_meta_box(
-      'proizvod_availability_meta_box', // ID
-      __('Dostupnost', 'textdomain'), // Title
-      'proizvod_availability_meta_box_callback', // Callback function
-      'proizvod', // Post type
-      'side', // Context
-      'default' // Priority
+    'article_availability_meta_box', // ID
+    __('Availability', 'textdomain'), // Title
+    'article_availability_meta_box_callback', // Callback function
+    'article', // Post type
+    'side', // Context
+    'default' // Priority
   );
 }
-add_action('add_meta_boxes', 'proizvod_availability_add_meta_box');
+add_action('add_meta_boxes', 'article_availability_add_meta_box');
 ?>
 
 <?php
@@ -41,70 +41,70 @@ add_action('add_meta_boxes', 'proizvod_availability_add_meta_box');
 
 // Display price
 
-function proizvod_details_meta_box_callback($post) {
-  $price = get_post_meta($post->ID, '_proizvod_cena', true);
+function article_details_meta_box_callback($post) {
+  $price = get_post_meta($post->ID, '_article_price', true);
   ?>
   <p>
-      <label for="proizvod_cena"><?php _e('Price', 'textdomain'); ?></label><br>
-      <input type="number" step="0.01" name="proizvod_cena" id="proizvod_cena" value="<?php echo esc_attr($price); ?>">
+    <label for="article_price"><?php _e('Price', 'textdomain'); ?></label><br>
+    <input type="number" step="0.01" name="article_price" id="article_price" value="<?php echo esc_attr($price); ?>">
   </p>
   <?php
 }
 
 // Display availability
 
-function proizvod_availability_meta_box_callback($post) {
-  $availability = get_post_meta($post->ID, '_proizvod_availability', true);
+function article_availability_meta_box_callback($post) {
+  $availability = get_post_meta($post->ID, '_article_availability', true);
   ?>
   <p>
-      <label for="proizvod_availability"><?php _e('Dostupnost', 'textdomain'); ?></label><br>
-      <select name="proizvod_availability" id="proizvod_availability">
-          <option value="Dostupno" <?php selected($availability, 'Dostupno'); ?>>Dostupno</option>
-          <option value="Nije dostupno" <?php selected($availability, 'Nije dostupno'); ?>>Nije dostupno</option>
-      </select>
+    <label for="article_availability"><?php _e('Availability', 'textdomain'); ?></label><br>
+    <select name="article_availability" id="article_availability">
+      <option value="Available" <?php selected($availability, 'Available'); ?>>Available</option>
+      <option value="Unavailable" <?php selected($availability, 'Unavailable'); ?>>Unavailable</option>
+    </select>
   </p>
   <?php
 }
 
-function proizvod_save_meta_fields($post_id) {
+function article_save_meta_fields($post_id) {
 
   // Save price
-  if (isset($_POST['proizvod_cena'])) {
-      update_post_meta($post_id, '_proizvod_cena', floatval($_POST['proizvod_cena']));
+  if (isset($_POST['article_price'])) {
+      update_post_meta($post_id, '_article_price', floatval($_POST['article_price']));
   }
 
   // Save availability
-  if (isset($_POST['proizvod_availability'])) {
-      update_post_meta($post_id, '_proizvod_availability', sanitize_text_field($_POST['proizvod_availability']));
+  if (isset($_POST['article_availability'])) {
+      update_post_meta($post_id, '_article_availability', sanitize_text_field($_POST['article_availability']));
   }
 }
-add_action('save_post', 'proizvod_save_meta_fields');
+add_action('save_post', 'article_save_meta_fields');
 
 // Register admin menu page
 
-function proizvod_admin_menu() {
-  add_menu_page('Dodaj novi proizvod', 'Dodaj proizvod', 'manage_options', 'proizvod_admin', 'proizvod_admin_page', 'dashicons-cart', 6);
+function article_admin_menu() {
+  add_menu_page('Add new article', 'Add article', 'manage_options', 'article_admin', 'article_admin_page', 'dashicons-cart', 6);
 }
-add_action('admin_menu', 'proizvod_admin_menu');
+add_action('admin_menu', 'article_admin_menu');
 
 // Render page contents
 
-function proizvod_admin_page() {
+function article_admin_page() {
   ?>
   <div>
-    <h2>Dodaj Proizvod</h2>
-    <p><i>Polja sa zvezdicom su obavezna.</i></p>
-    <form id="proizvod-form">
+    <h2>Add New Articles</h2>
+    <p><i>Fields with * are required.</i></p>
+    <form id="article-form">
       <div>
-        <label for="proizvod_title">Naziv*:</label><br>
-        <input type="text" id="proizvod_title" name="proizvod_title" required>
+        <label for="article_title">Name*:</label><br>
+        <input type="text" id="article_title" name="article_title" required>
       </div>
       <br>
       <div>
-        <label for="proizvod_content">Opis:</label><br>
+        <label for="article_content">Details:</label><br>
         <?php
-        wp_editor('', 'proizvod_content', array(
-            'textarea_name' => 'proizvod_content',
+        wp_editor('', 'article_content', array(
+            'textarea_name' => 'article_content',
             'media_buttons' => false,
             'textarea_rows' => 5,
             'teeny'         => true
@@ -112,33 +112,33 @@ function proizvod_admin_page() {
         ?>
       </div>
       <div>
-        <label for="proizvod_cena">Cena*:</label><br>
-        <input type="number" id="proizvod_cena" name="proizvod_cena" required>
+        <label for="article_price">Price*:</label><br>
+        <input type="number" id="article_price" name="article_price" required>
       </div>
       <div>
-        <label for="proizvod_availability">Dostupnost:</label><br>
-        <select id="proizvod_availability" name="proizvod_availability">
-          <option value="Dostupno">Dostupno</option>
-          <option value="Nije dostupno">Nije dostupno</option>
+        <label for="article_availability">Availability:</label><br>
+        <select id="article_availability" name="article_availability">
+          <option value="Available">Available</option>
+          <option value="Unavailable">Unavailable</option>
         </select>
       </div>
       <br>
-      <button type="submit">Dodaj proizvod</button>
+      <button type="submit">Add Article</button>
     </form>
     <div id="noticeHolder"></div>
   </div>
 
   <script type="text/javascript">
   jQuery(document).ready(function($) {
-    $('#proizvod-form').on('submit', function(e) {
+    $('#article-form').on('submit', function(e) {
       e.preventDefault();
 
       var formData = {
-        action: 'add_proizvod',
-        title: $('#proizvod_title').val(),
-        cena: $('#proizvod_cena').val(),
-        availability: $('#proizvod_availability').val(),
-        content: tinyMCE.get('proizvod_content') ? tinyMCE.get('proizvod_content').getContent() : $('#proizvod_content').val(),
+        action: 'add_article',
+        title: $('#article_title').val(),
+        price: $('#article_price').val(),
+        availability: $('#article_availability').val(),
+        content: tinyMCE.get('article_content') ? tinyMCE.get('article_content').getContent() : $('#article_content').val(),
       };
 
       $.post(ajaxurl, formData, function(response) {
@@ -146,8 +146,8 @@ function proizvod_admin_page() {
 
         // Clear inputs
 
-        $('#proizvod-form')[0].reset();
-        tinyMCE.get('proizvod_content').setContent('');
+        $('#article-form')[0].reset();
+        tinyMCE.get('article_content').setContent('');
       });
     });
   });
@@ -160,35 +160,35 @@ function proizvod_admin_page() {
 
 // AJAX logic
 
-function add_proizvod_ajax() {
+function add_article_ajax() {
 
   // Get the data
 
   $title = sanitize_text_field($_POST['title']);
-  $cena = sanitize_text_field($_POST['cena']);
+  $price = sanitize_text_field($_POST['price']);
   $availability = sanitize_text_field($_POST['availability']);
   $content = sanitize_text_field($_POST['content']);
 
   $post_id = wp_insert_post(array(
     'post_title'   => $title,
     'post_content' => $content,
-    'post_type'    => 'proizvod',
+    'post_type'    => 'article',
     'post_status'  => 'publish',
   ));
 
-  // Adding new proizvod
+  // Adding new article
 
   if ($post_id) {
 
     // Meta fields handling inside because wp_insert_post() equals 0
 
-    update_post_meta($post_id, '_proizvod_cena', $cena);
-    update_post_meta($post_id, '_proizvod_availability', $availability);
-    echo '<p style="color: green;">Product added successfully!</p>';
+    update_post_meta($post_id, '_article_price', $price);
+    update_post_meta($post_id, '_article_availability', $availability);
+    echo '<p style="color: green;">article added successfully!</p>';
   } else {
-    echo '<p style="color: red;">Failed to add product.</p>';
+    echo '<p style="color: red;">Failed to add article.</p>';
   }
 
   wp_die();
 }
-add_action('wp_ajax_add_proizvod', 'add_proizvod_ajax');
+add_action('wp_ajax_add_article', 'add_article_ajax');
